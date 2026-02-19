@@ -30,17 +30,56 @@ export default function Home() {
   const fetchNFTs = async (address: string) => {
     setLoading(true);
     setError(null);
-    try {
-      // Example: Using a public API or mock data
-      // In production, you would call your backend API or service directly
-      const response = await fetch(`https://api.collectorcrypt.com/wallet/${address}/nfts`);
-      const data = await response.json();
 
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setNfts(data.nfts || []);
-      }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    try {
+      // Mock data for demonstration
+      const mockNFTs: NFT[] = [
+        {
+          id: '1',
+          name: 'Charizard - Base Set Holo',
+          image: 'https://images.pokemontcg.io/base1/hires/4.jpg',
+          rarity: 'Holo Rare',
+          series: 'Base Set',
+          collectorCryptPrice: 380.00,
+          marketPrice: 350.00,
+          priceDifference: -7.89,
+        },
+        {
+          id: '2',
+          name: 'Pikachu - Illustrator',
+          image: 'https://images.pokemontcg.io/pqp/hires/1.jpg',
+          rarity: 'Promo',
+          series: 'Pokemon Quest',
+          collectorCryptPrice: 2500.00,
+          marketPrice: 2800.00,
+          priceDifference: 12.00,
+        },
+        {
+          id: '3',
+          name: 'Blastoise - Base Set Holo',
+          image: 'https://images.pokemontcg.io/base1/hires/2.jpg',
+          rarity: 'Holo Rare',
+          series: 'Base Set',
+          collectorCryptPrice: 200.00,
+          marketPrice: 185.00,
+          priceDifference: -7.50,
+        },
+        {
+          id: '4',
+          name: 'Mewtwo - Base Set Holo',
+          image: 'https://images.pokemontcg.io/base1/hires/10.jpg',
+          rarity: 'Holo Rare',
+          series: 'Base Set',
+          collectorCryptPrice: 150.00,
+          marketPrice: 160.00,
+          priceDifference: 6.67,
+        },
+      ];
+
+      setNfts(mockNFTs);
     } catch (err) {
       console.error('Error fetching NFTs:', err);
       setError('Failed to fetch NFTs. Please try again later.');
