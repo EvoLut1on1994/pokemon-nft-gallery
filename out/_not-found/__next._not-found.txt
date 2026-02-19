@@ -1,4 +1,4 @@
 1:"$Sreact.fragment"
-2:I[28482,["/pokemon-nft-gallery/_next/static/chunks/1d98684ae5912258.js"],"default"]
-3:I[96729,["/pokemon-nft-gallery/_next/static/chunks/1d98684ae5912258.js"],"default"]
-0:{"buildId":"Cnk2s9mk9sufIdTa6aliB","rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"loading":null,"isPartial":false}
+2:I[28482,["/_next/static/chunks/1d98684ae5912258.js"],"default"]
+3:I[96729,["/_next/static/chunks/1d98684ae5912258.js"],"default"]
+0:{"buildId":"D3C0tdgQhbY6r-fvm_p5U","rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"loading":null,"isPartial":false}
