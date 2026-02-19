@@ -13,7 +13,6 @@ export default function Home() {
   const [background, setBackground] = useState('default');
 
   useEffect(() => {
-    // Get parameters from URL
     const params = new URLSearchParams(window.location.search);
     const wallet = params.get('walletaddress');
     const bg = params.get('background');
@@ -32,16 +31,19 @@ export default function Home() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/nfts?wallet=${address}`);
+      // Example: Using a public API or mock data
+      // In production, you would call your backend API or service directly
+      const response = await fetch(`https://api.collectorcrypt.com/wallet/${address}/nfts`);
       const data = await response.json();
 
       if (data.error) {
         setError(data.error);
       } else {
-        setNfts(data.nfts);
+        setNfts(data.nfts || []);
       }
     } catch (err) {
-      setError('Failed to fetch NFTs');
+      console.error('Error fetching NFTs:', err);
+      setError('Failed to fetch NFTs. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -49,7 +51,6 @@ export default function Home() {
 
   const handleSearch = () => {
     if (walletAddress.trim()) {
-      // Update URL
       const url = new URL(window.location.href);
       url.searchParams.set('walletaddress', walletAddress);
       url.searchParams.set('background', background);
