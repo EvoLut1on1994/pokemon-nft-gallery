@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:enabled {
+            background-color: #4f46e5;
+            color: white;
+        }
+        button:enabled:hover {
+            background-color: #4338ca;
+        }
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Button Functionality Test</h1>
+
+    <div class="test-section">
+        <h2>Test 1: Basic Button with Input</h2>
+        <input type="text" id="input1" placeholder="Type something to enable button" oninput="updateButton1()">
+        <button id="button1" onclick="handleButton1()">Click Me</button>
+        <div class="result" id="result1">Button state: Disabled</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: React-style Button (Simulated)</h2>
+        <input type="text" id="input2" placeholder="Enter wallet address" oninput="updateButton2()">
+        <button id="button2" onclick="handleButton2()">Search NFTs</button>
+        <div class="result" id="result2">Status: Waiting for input</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Always Enabled Button</h2>
+        <button onclick="handleButton3()">This should always be clickable</button>
+        <div class="result" id="result3">Click the button</div>
+    </div>
+
+    <script>
+        function updateButton1() {
+            const input = document.getElementById('input1');
+            const button = document.getElementById('button1');
+            const result = document.getElementById('result1');
+
+            if (input.value.trim()) {
+                button.disabled = false;
+                result.textContent = 'Button state: Enabled';
+            } else {
+                button.disabled = true;
+                result.textContent = 'Button state: Disabled';
+            }
+        }
+
+        function handleButton1() {
+            const input = document.getElementById('input1');
+            const result = document.getElementById('result1');
+            result.textContent = `Button clicked! Input: "${input.value}"`;
+        }
+
+        function updateButton2() {
+            const input = document.getElementById('input2');
+            const button = document.getElementById('button2');
+            const result = document.getElementById('result2');
+
+            if (input.value.trim()) {
+                button.disabled = false;
+                result.textContent = 'Status: Ready to search';
+            } else {
+                button.disabled = true;
+                result.textContent = 'Status: Waiting for input';
+            }
+        }
+
+        function handleButton2() {
+            const input = document.getElementById('input2');
+            const result = document.getElementById('result2');
+            result.textContent = `Searching NFTs for wallet: "${input.value}"`;
+        }
+
+        function handleButton3() {
+            const result = document.getElementById('result3');
+            result.textContent = 'Button clicked! This button is always enabled.';
+        }
+
+        // Initialize buttons
+        updateButton1();
+        updateButton2();
+    </script>
+</body>
+</html>
