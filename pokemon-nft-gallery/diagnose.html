@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Page</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .section {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        .info { color: blue; }
+        pre {
+            background: #f9f9f9;
+            padding: 10px;
+            overflow-x: auto;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        input {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnostic Page - Pokemon NFT Gallery</h1>
+
+    <div class="section">
+        <h2>1. Environment Information</h2>
+        <div id="env-info"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. JavaScript Status</h2>
+        <div id="js-status" class="info">Checking...</div>
+    </div>
+
+    <div class="section">
+        <h2>3. React Hydration Test</h2>
+        <div id="react-test"></div>
+    </div>
+
+    <div class="section">
+        <h2>4. Button Functionality Test</h2>
+        <input type="text" id="test-input" placeholder="Type here to test button" oninput="updateTestButton()">
+        <button id="test-button" disabled onclick="testButtonClick()">Test Button</button>
+        <div id="button-result" class="info">Status: Disabled (waiting for input)</div>
+    </div>
+
+    <div class="section">
+        <h2>5. Console Log</h2>
+        <button onclick="clearConsole()">Clear</button>
+        <pre id="console-log"></pre>
+    </div>
+
+    <div class="section">
+        <h2>6. Instructions</h2>
+        <ol>
+            <li>Check if JavaScript is enabled (green = yes)</li>
+            <li>Try typing in the test input field above</li>
+            <li>The button should become enabled when you type</li>
+            <li>Click the button to test click handler</li>
+            <li>Check the console log for any errors</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>7. Common Issues</h2>
+        <ul>
+            <li><strong>Button stays disabled:</strong> Make sure you've typed something in the input field</li>
+            <li><strong>Button doesn't respond:</strong> Check console for errors</li>
+            <li><strong>Page doesn't load:</strong> Check internet connection and refresh the page</li>
+        </ul>
+    </div>
+
+    <script>
+        const consoleLog = [];
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+        };
+
+        // Override console methods to capture logs
+        ['log', 'error', 'warn', 'info'].forEach(method => {
+            console[method] = function(...args) {
+                const message = args.map(arg =>
+                    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+                ).join(' ');
+
+                consoleLog.push({
+                    type: method,
+                    message: message,
+                    timestamp: new Date().toISOString()
+                });
+
+                originalConsole[method].apply(console, args);
+                updateConsoleDisplay();
+            };
+        });
+
+        function updateConsoleDisplay() {
+            const consoleElement = document.getElementById('console-log');
+            const recentLogs = consoleLog.slice(-20).map(log =>
+                `[${log.type.toUpperCase()}] ${log.timestamp}: ${log.message}`
+            ).join('\n');
+            consoleElement.textContent = recentLogs || 'No logs yet...';
+        }
+
+        function clearConsole() {
+            consoleLog.length = 0;
+            updateConsoleDisplay();
+        }
+
+        // Environment info
+        document.getElementById('env-info').innerHTML = `
+            <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+            <p><strong>Language:</strong> ${navigator.language}</p>
+            <p><strong>Platform:</strong> ${navigator.platform}</p>
+            <p><strong>Screen Resolution:</strong> ${screen.width}x${screen.height}</p>
+            <p><strong>Current URL:</strong> ${window.location.href}</p>
+            <p><strong>Path:</strong> ${window.location.pathname}</p>
+        `;
+
+        // JavaScript status
+        window.addEventListener('load', function() {
+            const jsStatus = document.getElementById('js-status');
+            jsStatus.innerHTML = '<span class="success">✓ JavaScript is enabled and running</span>';
+            console.log('JavaScript loaded successfully');
+        });
+
+        // React hydration test
+        function testReactHydration() {
+            const reactTest = document.getElementById('react-test');
+            reactTest.innerHTML = '<p class="info">Checking React...</p>';
+
+            // Check if React is loaded
+            if (typeof window !== 'undefined') {
+                reactTest.innerHTML = '<p class="success">✓ Window object available</p>';
+                console.log('Window object found');
+
+                // Check if React is in the page
+                setTimeout(() => {
+                    const scripts = Array.from(document.querySelectorAll('script'));
+                    const reactScript = scripts.find(s => s.src && s.src.includes('_next'));
+                    if (reactScript) {
+                        reactTest.innerHTML += '<p class="success">✓ React scripts detected</p>';
+                        console.log('React scripts found:', reactScript.src);
+                    } else {
+                        reactTest.innerHTML += '<p class="error">✗ React scripts not detected</p>';
+                        console.error('React scripts not found');
+                    }
+                }, 1000);
+            } else {
+                reactTest.innerHTML = '<p class="error">✗ Window object not available</p>';
+                console.error('Window object not found');
+            }
+        }
+
+        testReactHydration();
+
+        // Button functionality test
+        function updateTestButton() {
+            const input = document.getElementById('test-input');
+            const button = document.getElementById('test-button');
+            const result = document.getElementById('button-result');
+
+            if (input.value.trim()) {
+                button.disabled = false;
+                result.innerHTML = '<span class="success">Status: Enabled - Button is now clickable!</span>';
+                console.log('Button enabled with input:', input.value);
+            } else {
+                button.disabled = true;
+                result.innerHTML = '<span class="info">Status: Disabled (waiting for input)</span>';
+                console.log('Button disabled - input is empty');
+            }
+        }
+
+        function testButtonClick() {
+            const input = document.getElementById('test-input');
+            const result = document.getElementById('button-result');
+            result.innerHTML = `<span class="success">Button clicked! Input: "${input.value}"</span>`;
+            console.log('Button clicked with input:', input.value);
+            alert(`Button works! You entered: ${input.value}`);
+        }
+
+        // Initialize
+        console.log('Diagnostic page loaded');
+        updateTestButton();
+    </script>
+</body>
+</html>
