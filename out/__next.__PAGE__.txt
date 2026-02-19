@@ -3,7 +3,7 @@
 3:I[68620,["/pokemon-nft-gallery/_next/static/chunks/cf14f0bcd09b0f53.js"],"default"]
 6:I[85931,["/pokemon-nft-gallery/_next/static/chunks/1d98684ae5912258.js"],"OutletBoundary"]
 7:"$Sreact.suspense"
-0:{"buildId":"I0TJrwseoTJC8Otcpl3aK","rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"/pokemon-nft-gallery/_next/static/chunks/cf14f0bcd09b0f53.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"loading":null,"isPartial":false}
+0:{"buildId":"Cnk2s9mk9sufIdTa6aliB","rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"/pokemon-nft-gallery/_next/static/chunks/cf14f0bcd09b0f53.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"loading":null,"isPartial":false}
 4:{}
 5:"$0:rsc:props:children:0:props:serverProvidedParams:params"
 8:null
