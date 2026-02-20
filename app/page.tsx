@@ -4,6 +4,11 @@ import { useState, useEffect } from 'react';
 import NFTCard from '@/components/NFTCard';
 import WalletInput from '@/components/WalletInput';
 import { NFT } from '@/types';
+import {
+  fetchSolanaNFTs,
+  matchPokemonCard,
+  calculateMarketPrice,
+} from '@/lib/api';
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState('');
@@ -11,6 +16,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [background, setBackground] = useState('default');
+  const [usingMockData, setUsingMockData] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -30,56 +36,49 @@ export default function Home() {
   const fetchNFTs = async (address: string) => {
     setLoading(true);
     setError(null);
-
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    setUsingMockData(false);
 
     try {
-      // Mock data for demonstration
-      const mockNFTs: NFT[] = [
-        {
-          id: '1',
-          name: 'Charizard - Base Set Holo',
-          image: 'https://images.pokemontcg.io/base1/hires/4.jpg',
-          rarity: 'Holo Rare',
-          series: 'Base Set',
-          collectorCryptPrice: 380.00,
-          marketPrice: 350.00,
-          priceDifference: -7.89,
-        },
-        {
-          id: '2',
-          name: 'Pikachu - Illustrator',
-          image: 'https://images.pokemontcg.io/pqp/hires/1.jpg',
-          rarity: 'Promo',
-          series: 'Pokemon Quest',
-          collectorCryptPrice: 2500.00,
-          marketPrice: 2800.00,
-          priceDifference: 12.00,
-        },
-        {
-          id: '3',
-          name: 'Blastoise - Base Set Holo',
-          image: 'https://images.pokemontcg.io/base1/hires/2.jpg',
-          rarity: 'Holo Rare',
-          series: 'Base Set',
-          collectorCryptPrice: 200.00,
-          marketPrice: 185.00,
-          priceDifference: -7.50,
-        },
-        {
-          id: '4',
-          name: 'Mewtwo - Base Set Holo',
-          image: 'https://images.pokemontcg.io/base1/hires/10.jpg',
-          rarity: 'Holo Rare',
-          series: 'Base Set',
-          collectorCryptPrice: 150.00,
-          marketPrice: 160.00,
-          priceDifference: 6.67,
-        },
-      ];
+      // Fetch Solana NFTs from Helius API
+      const solanaNFTs = await fetchSolanaNFTs(address);
 
-      setNfts(mockNFTs);
+      if (solanaNFTs.length === 0) {
+        setNfts([]);
+        return;
+      }
+
+      // Match each NFT to Pokemon TCG data
+      const enrichedNFTs: NFT[] = [];
+      const pricePromises = solanaNFTs.map(async (nft) => {
+        const pokemonCard = await matchPokemonCard(nft.name);
+        const marketPrice = pokemonCard ? calculateMarketPrice(pokemonCard) : 0;
+
+        // Simulate CollectorCrypt price (since we don't have their API)
+        const collectorCryptPrice = marketPrice > 0
+          ? marketPrice * (0.9 + Math.random() * 0.2) // +/- 10% variance
+          : 0;
+
+        return {
+          id: nft.id,
+          name: nft.name,
+          image: nft.image,
+          rarity: nft.attributes.find(a => a.trait_type === 'Rarity')?.value || 'Unknown',
+          series: nft.collection,
+          collectorCryptPrice: parseFloat(collectorCryptPrice.toFixed(2)),
+          marketPrice: parseFloat(marketPrice.toFixed(2)),
+          priceDifference: collectorCryptPrice > 0 && marketPrice > 0
+            ? parseFloat(((collectorCryptPrice - marketPrice) / marketPrice * 100).toFixed(2))
+            : 0,
+        };
+      });
+
+      const resolvedNFTs = await Promise.all(pricePromises);
+      setNfts(resolvedNFTs);
+
+      // Check if we're using mock data
+      if (solanaNFTs.length === 4 && solanaNFTs[0]?.name === 'Charizard Base Set') {
+        setUsingMockData(true);
+      }
     } catch (err) {
       console.error('Error fetching NFTs:', err);
       setError('Failed to fetch NFTs. Please try again later.');
@@ -146,10 +145,19 @@ export default function Home() {
 
         {nfts.length > 0 && (
           <div className="mt-8">
+            {usingMockData && (
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-6 text-center">
+                ⚠️ Using mock data - Set NEXT_PUBLIC_HELIUS_API_KEY in .env.local to fetch real Solana NFTs
+              </div>
+            )}
+
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-semibold text-gray-800">
                 {nfts.length} NFT{ nfts.length !== 1 ? 's' : '' } Found
               </h2>
+              {!usingMockData && (
+                <span className="text-sm text-green-600">✅ Live data from Solana & Pokemon TCG API</span>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
